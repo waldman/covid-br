@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2020-06-07
+- Setup Data Lake for fetched data
 - Improve the historical data path
 - Add content type for object upload to S3
 

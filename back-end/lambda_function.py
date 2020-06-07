@@ -14,6 +14,7 @@ from pprint import pprint
 health_ministry_json_data_url = os.environ.get('HEALTH_MINISTRY_JSON_DATA_URL')
 covid_br_url = os.environ.get('COVID_BR_URL')
 destination_bucket = os.environ.get('DESTINATION_BUCKET')
+data_lake_bucket = os.environ.get('DATA_LAKE_BUCKET')
 
 # Action! o/
 def lambda_handler(event, context):
@@ -54,11 +55,18 @@ def lambda_handler(event, context):
             'dt_updated': current_data['dt_updated'],
         }
 
-    # Upload New Values
+    # Upload Data
     today = date.today().strftime('%Y-%m-%d').split('-')
     client = boto3.client('s3')
 
-    ### API
+    ### Send Health Ministry Current Data to the Data Lake
+    client.put_object(
+        Body=json.dumps(current_data),
+        Bucket=data_lake_bucket,
+        ContentType='application/json',
+        Key='health-ministry-daily-feed/%s/%s/%s/%s.json' % (today[0], today[1], today[2], current_data['dt_updated']))
+
+    ### Upload New API Data
     client.put_object(
         Body=json.dumps(output),
         Bucket=destination_bucket,

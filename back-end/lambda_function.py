@@ -22,12 +22,12 @@ def lambda_handler(event, context):
     current_data = json.loads(health_ministry_data.text)
 
     ## Fetch Yesterday Data
-    yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d')
-    yesterday_json_data_url = '%s/%s.json' % (covid_br_url, yesterday)
+    yesterday = (date.today() - timedelta(days=1)).strftime('%Y-%m-%d').split('-')
+    yesterday_json_data_url = '%s/%s/%s/%s.json' % (covid_br_url, yesterday[0], yesterday[1], yesterday[2])
     covid_br_yesterday_data = requests.get(yesterday_json_data_url)
     yesterday_data = json.loads(covid_br_yesterday_data.text)
 
-    # Calculate New Values and setup output dict
+    ## Calculate New Values and setup output dict
     output = dict()
     if yesterday_data['casos']['novos'] == current_data['confirmados']['novos'] and yesterday_data['obitos']['novos'] == current_data['obitos']['novos']:
         output = {
@@ -55,8 +55,22 @@ def lambda_handler(event, context):
         }
 
     # Upload New Values
-    today = date.today().strftime('%Y-%m-%d')
+    today = date.today().strftime('%Y-%m-%d').split('-')
     client = boto3.client('s3')
-    client.put_object(Body=json.dumps(output), Bucket=destination_bucket, Key='%s.json' % (today))
-    client.put_object(Body=json.dumps(output), Bucket=destination_bucket, Key='latest.json')
 
+    ### API
+    client.put_object(
+        Body=json.dumps(output),
+        Bucket=destination_bucket,
+        ContentType='application/json',
+        Key='%s/%s/%s.json' % (today[0], today[1], today[2]))
+    client.put_object(
+        Body=json.dumps(output),
+        Bucket=destination_bucket,
+        ContentType='application/json',
+        Key='latest.json')
+    client.put_object(
+        Body=json.dumps(output),
+        Bucket=destination_bucket,
+        ContentType='application/json',
+        Key='latest-day.json')

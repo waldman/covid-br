@@ -2,9 +2,13 @@
   <head>
     <title>covid.waldman.io</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+    div.container {
+      font-size: small;
+    }
+    </style>
   <body>
-    <h2> Dados de hoje </h2>
-    <h3>Ultimos Numeros:</h3>
+    <h2>Ultimos Numeros:</h2>
     <div class="container"></div>
     <script>
           $.getJSON('http://covid.waldman.io/latest.json', function(data) {
@@ -12,13 +16,17 @@
           var text = `<b>Casos Novos:</b> ${data.casos.novos}<br>
                     <b>Casos Total:</b> ${data.casos.total}<br>
                     <b>Obitos Novos:</b> ${data.obitos.novos}<br>
-                    <b>Obitos Total:</b> ${data.obitos.total}<br>`
+                    <b>Obitos Total:</b> ${data.obitos.total}<br>
+                    <br>
+                    <b> Atualizado as:</b> ${data.dt_updated}`
         $(".container").html(text);
     });
     </script>
-    <h2> API </h2>
-    Endpoints: <br>
+    <h2> API: </h2>
+    <b>Endpoints:</b> <br>
     - http://covid.waldman.io/latest.json <br>
     - http://covid.waldman.io/YYYY/MM/DD.json <br>
+    <br>
+    <a href="https://github.com/waldman/covid-br">Codigo Fonte: https://github.com/waldman/covid-br</a>
   </body>
 </html>

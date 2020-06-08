@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## 2020-06-07
+- Improve index.html
 - Add simple front-end
 - Setup Data Lake for fetched data
 - Improve the historical data path
